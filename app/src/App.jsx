@@ -1,10 +1,14 @@
 import "./App.css";
+import { BrowserRouter, Route, Routes } from "react-router-dom";
+import Home from "./scenes/Home";
 
 function App() {
   return (
-    <div className="bg-black  ">
-      <h1 className=" font-bold text-4xl text-red-900">Vite + React</h1>
-    </div>
+    <BrowserRouter>
+      <Routes>
+        <Route path="/" element={<Home />} />
+      </Routes>
+    </BrowserRouter>
   );
 }
 
