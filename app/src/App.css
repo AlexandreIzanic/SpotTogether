@@ -1,3 +1,15 @@
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
+
+.btn-neutral {
+  @apply bg-[#2D2D2D] text-white border-none outline-white hover:bg-[#464646];
+}
+
+.input {
+  @apply bg-[#2D2D2D] text-white border-none outline-white;
+}
+
+.select {
+  @apply bg-[#2D2D2D] text-white border-none outline-white;
+}
