@@ -7,7 +7,6 @@ const Navbar = () => {
   const [newList, setNewList] = useState({ Name: "" });
 
   const add = async () => {
-    console.log("test");
     await supabase.from("Lists").insert([newList]);
     fetch();
     document.getElementById("my_modal_2").close();
@@ -15,7 +14,6 @@ const Navbar = () => {
 
   const fetch = async () => {
     const { data } = await supabase.from("Lists").select();
-
     setLists(data);
   };
 

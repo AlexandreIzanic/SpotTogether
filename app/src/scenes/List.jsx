@@ -4,6 +4,7 @@ import Card from "../components/card";
 import { supabase } from "../helper/supabaseClient";
 import toast from "react-hot-toast";
 import { useParams } from "react-router-dom";
+import { useNavigate } from "react-router-dom";
 
 const Home = () => {
   const { id } = useParams();
@@ -43,6 +44,7 @@ const Home = () => {
 };
 
 const FiltersBar = ({ fetch, listId }) => {
+  const navigate = useNavigate();
   const [newPlace, setNewPlace] = useState({ title: null });
   const add = async () => {
     await supabase
@@ -52,6 +54,14 @@ const FiltersBar = ({ fetch, listId }) => {
     setNewPlace({ title: null, type: null });
     toast.success("Successfully created!");
   };
+
+  const deleteList = async () => {
+    await supabase.from("Lists").delete().eq("id", listId);
+    fetch();
+    toast.success("Successfully deleted!");
+    navigate("/");
+  };
+
   return (
     <div className="flex justify-between">
       <div className="flex gap-4">
@@ -67,6 +77,10 @@ const FiltersBar = ({ fetch, listId }) => {
 
         <button className="btn btn-neutral" onClick={add}>
           +
+        </button>
+
+        <button className="btn btn-danger" onClick={deleteList}>
+          Delete List
         </button>
       </div>
     </div>
