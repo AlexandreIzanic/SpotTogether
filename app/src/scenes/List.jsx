@@ -16,6 +16,8 @@ const Home = () => {
   };
 
   const onDelete = async (id) => {
+    if (!window.confirm("Are you sure you want to delete this place?")) return;
+
     await supabase.from("place").delete().eq("id", id);
     fetch();
     toast.success("Successfully deleted!");
@@ -25,20 +27,48 @@ const Home = () => {
     fetch();
   }, [id]);
 
+  const [view, setView] = useState("table");
+
   return (
     <div className="">
       <FiltersBar fetch={fetch} listId={id} />
-      {places.length
-        ? places.map((place) => (
-            <div key={place.id} className="py-4">
-              <Card
-                title={place.title}
-                instagramUrl={place.instagram_url}
-                onDelete={() => onDelete(place.id)}
-              />
-            </div>
-          ))
-        : "No places found!"}
+
+      <div role="tablist" className="tabs tabs-bordered w-10">
+        <input
+          type="radio"
+          name="my_tabs_1"
+          role="tab"
+          className="tab"
+          onClick={() => setView("table")}
+          aria-label="Table"
+          defaultChecked
+        />
+
+        <input
+          type="radio"
+          name="my_tabs_1"
+          role="tab"
+          className="tab"
+          aria-label="Grid"
+          onClick={() => setView("grid")}
+        />
+      </div>
+      <div className={`${view === "table" ? "" : " grid grid-cols-2 gap-4"}`}>
+        {places.length
+          ? places.map((place) => (
+              <div
+                key={place.id}
+                className={`${view === "table" ? "py-4" : ""}`}
+              >
+                <Card
+                  title={place.title}
+                  instagramUrl={place.instagram_url}
+                  onDelete={() => onDelete(place.id)}
+                />
+              </div>
+            ))
+          : "No places found!"}
+      </div>
     </div>
   );
 };
@@ -63,6 +93,7 @@ const FiltersBar = ({ fetch, listId }) => {
   };
 
   const deleteList = async () => {
+    if (!window.confirm("Are you sure you want to delete this List?")) return;
     await supabase.from("Lists").delete().eq("id", listId);
     fetch();
     toast.success("Successfully deleted!");
