@@ -33,7 +33,7 @@ const Home = () => {
             <div key={place.id} className="py-4">
               <Card
                 title={place.title}
-                description={place.type}
+                instagramUrl={place.instagram_url}
                 onDelete={() => onDelete(place.id)}
               />
             </div>
@@ -45,11 +45,18 @@ const Home = () => {
 
 const FiltersBar = ({ fetch, listId }) => {
   const navigate = useNavigate();
-  const [newPlace, setNewPlace] = useState({ title: null });
+  const [newPlace, setNewPlace] = useState({
+    title: null,
+    instagram_url: null,
+  });
   const add = async () => {
-    await supabase
-      .from("place")
-      .insert([{ title: newPlace.title, list_id: listId }]);
+    await supabase.from("place").insert([
+      {
+        title: newPlace.title,
+        list_id: listId,
+        instagram_url: newPlace.instagram_url,
+      },
+    ]);
     fetch();
     setNewPlace({ title: null, type: null });
     toast.success("Successfully created!");
@@ -72,6 +79,16 @@ const FiltersBar = ({ fetch, listId }) => {
           value={newPlace.title || ""}
           onChange={(event) =>
             setNewPlace({ ...newPlace, title: event.target.value })
+          }
+        />
+
+        <input
+          type="text"
+          placeholder="Instagram URL"
+          className="input w-full max-w-xs"
+          value={newPlace.instagram_url || ""}
+          onChange={(event) =>
+            setNewPlace({ ...newPlace, instagram_url: event.target.value })
           }
         />
 

@@ -5,21 +5,34 @@ import { useEffect, useState } from "react";
 const Navbar = () => {
   const [lists, setLists] = useState([]);
   const [newList, setNewList] = useState({ Name: "" });
+  const [user, setUser] = useState(null);
 
+  const fetchUser = async () => {
+    const {
+      data: { user },
+    } = await supabase.auth.getUser();
+    setUser(user);
+  };
   const add = async () => {
-    await supabase.from("Lists").insert([newList]);
+    await supabase
+      .from("Lists")
+      .insert([{ Name: newList.Name, user_id: user.id }]);
     fetch();
     document.getElementById("my_modal_2").close();
   };
 
   const fetch = async () => {
-    const { data } = await supabase.from("Lists").select();
+    const { data } = await supabase
+      .from("Lists")
+      .select()
+      .eq("user_id", user.id);
     setLists(data);
   };
 
   useEffect(() => {
+    fetchUser();
     fetch();
-  }, []);
+  }, [user]);
 
   return (
     <nav className="navbar navbar-expand-lg navbar-light bg-[#2D2D2D]  w-48 justify-center text-left ">
@@ -60,6 +73,17 @@ const Navbar = () => {
           >
             New List +
           </button>
+
+          <NavLink
+            to={`/settings`}
+            className={({ isActive }) =>
+              isActive
+                ? " font-semibold text-lg"
+                : "navbar-brand font-semibold text-lg text-[#a9a9a9]"
+            }
+          >
+            Settings
+          </NavLink>
         </div>
 
         <dialog id="my_modal_2" className="modal text-white ">
