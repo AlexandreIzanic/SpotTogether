@@ -8,7 +8,6 @@ import { useNavigate } from "react-router-dom";
 
 import "mapbox-gl/dist/mapbox-gl.css";
 import MapBox from "../components/MapBox";
-import Popup from "../components/Popup";
 const Home = () => {
   const { id } = useParams();
   const [places, setPlaces] = useState([]);
@@ -56,51 +55,59 @@ const Home = () => {
   const [view, setView] = useState("table");
 
   return (
-    <div className="">
-      <div className="font-bold text-xl py-4">{list?.Name}</div>
+    <div className="overflow-y-hidden flex flex-col h-full ">
+      <div className="sticky bg-[#1C1C1C] top-0">
+        <div className="font-bold text-xl py-4">{list?.Name}</div>
+        <MapBox
+          places={places}
+          selectedMarker={selectedMarker}
+          setSelectedMarker={setSelectedMarker}
+        />
 
-      <MapBox
-        places={places}
-        selectedMarker={selectedMarker}
-        setSelectedMarker={setSelectedMarker}
-      />
+        <div className="form-control">
+          <label className="label cursor-pointer">
+            <span className="label-text font-bold text-xl py-4  ">
+              {list?.privacy}
+            </span>
+            <input
+              type="checkbox"
+              className="toggle toggle-primary"
+              checked={list?.privacy === "PUBLIC"}
+              onChange={handleChangePrivacy}
+            />
+          </label>
+        </div>
 
-      <div className="form-control">
-        <label className="label cursor-pointer">
-          <span className="label-text font-bold text-xl py-4">
-            {list?.privacy}
-          </span>
+        <FiltersBar fetch={fetch} listId={id} />
+        <div role="tablist" className="tabs tabs-bordered w-10 gap-1">
           <input
-            type="checkbox"
-            className="toggle toggle-primary"
-            checked={list?.privacy === "PUBLIC"}
-            onChange={handleChangePrivacy}
+            type="radio"
+            name="my_tabs_1"
+            role="tab"
+            className="tab"
+            onClick={() => setView("table")}
+            aria-label="Table"
+            defaultChecked
           />
-        </label>
+
+          <input
+            type="radio"
+            name="my_tabs_1"
+            role="tab"
+            className="tab"
+            aria-label="Grid"
+            onClick={() => setView("grid")}
+          />
+        </div>
       </div>
 
-      <FiltersBar fetch={fetch} listId={id} />
-      <div role="tablist" className="tabs tabs-bordered w-10">
-        <input
-          type="radio"
-          name="my_tabs_1"
-          role="tab"
-          className="tab"
-          onClick={() => setView("table")}
-          aria-label="Table"
-          defaultChecked
-        />
-
-        <input
-          type="radio"
-          name="my_tabs_1"
-          role="tab"
-          className="tab"
-          aria-label="Grid"
-          onClick={() => setView("grid")}
-        />
-      </div>
-      <div className={`${view === "table" ? "" : " grid grid-cols-2 gap-4"}`}>
+      <div
+        className={`${
+          view === "table"
+            ? "  overflow-y-auto "
+            : "overflow-y-auto  grid grid-cols-2 gap-4 py-4"
+        }`}
+      >
         {places.length
           ? places.map((place) => (
               <div
@@ -108,10 +115,7 @@ const Home = () => {
                 className={`${view === "table" ? "py-4" : ""}`}
               >
                 <Card
-                  title={place.title}
-                  instagramUrl={place.instagram_url}
-                  longitude={place.longitude}
-                  lattitude={place.lattitude}
+                  place={place}
                   onDelete={() => onDelete(place.id)}
                   setSelectedMarker={() => setSelectedMarker(place)}
                 />
@@ -177,7 +181,10 @@ const FiltersBar = ({ fetch, listId }) => {
           +
         </button>
 
-        <button className="btn btn-danger" onClick={deleteList}>
+        <button
+          className="btn btn-danger bg-[#7480ff] text-white"
+          onClick={deleteList}
+        >
           Delete List
         </button>
       </div>

@@ -20,7 +20,7 @@ const PublicLists = () => {
 
   return (
     <div>
-      <div role="tablist" className="tabs tabs-bordered w-10">
+      <div role="tablist" className="tabs tabs-bordered w-10 gap-1">
         <input
           type="radio"
           name="my_tabs_1"
@@ -89,18 +89,15 @@ const Table = ({ user }) => {
             <tr>
               <th>Name</th>
               <th>Owner</th>
-              <th>Created</th>
             </tr>
           </thead>
           <tbody>
             {listsFriends.map((list) => (
               <tr key={list.id} className="hover">
                 <td className="font-bold text-xl">
-                  <Link to={`/lists/${list.id}`}>{list.Name}</Link>
+                  <Link to={`/public-lists/${list.id}`}>{list.Name}</Link>
                 </td>
                 <td className="text-gray-400">{list.owner} </td>
-
-                <td className="text-gray-400">{list.created_at} </td>
               </tr>
             ))}
           </tbody>
