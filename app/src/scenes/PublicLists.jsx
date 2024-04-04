@@ -64,6 +64,16 @@ const Table = ({ user }) => {
         "user_id",
         friendsIds.map((f) => f.friend_id)
       );
+
+    for (const list of data) {
+      const { data: user } = await supabase
+        .from("profiles")
+        .select("username")
+        .eq("id", list.user_id)
+        .single();
+      list.owner = user.username;
+    }
+
     setListsFriends(data);
   };
 
@@ -88,7 +98,8 @@ const Table = ({ user }) => {
                 <td className="font-bold text-xl">
                   <Link to={`/lists/${list.id}`}>{list.Name}</Link>
                 </td>
-                <td className="text-gray-400">{list.user_id} </td>
+                <td className="text-gray-400">{list.owner} </td>
+
                 <td className="text-gray-400">{list.created_at} </td>
               </tr>
             ))}
