@@ -6,9 +6,23 @@ import toast from "react-hot-toast";
 import { useParams } from "react-router-dom";
 import { useNavigate } from "react-router-dom";
 
+import "mapbox-gl/dist/mapbox-gl.css";
+import MapBox from "../components/MapBox";
+import Popup from "../components/Popup";
 const Home = () => {
   const { id } = useParams();
   const [places, setPlaces] = useState([]);
+  const [list, setList] = useState(null);
+  const [selectedMarker, setSelectedMarker] = useState(null);
+
+  const fetchList = async () => {
+    const { data } = await supabase
+      .from("Lists")
+      .select()
+      .eq("id", id)
+      .single();
+    setList(data);
+  };
 
   const fetch = async () => {
     const { data } = await supabase.from("place").select().eq("list_id", id);
@@ -23,16 +37,49 @@ const Home = () => {
     toast.success("Successfully deleted!");
   };
 
+  const handleChangePrivacy = async () => {
+    console.log(id);
+    const newPrivacy = list.privacy === "PUBLIC" ? "PRIVATE" : "PUBLIC";
+    await supabase
+      .from("Lists")
+      .update({ privacy: newPrivacy })
+      .eq("id", id)
+      .single();
+    fetchList();
+  };
+
   useEffect(() => {
     fetch();
+    fetchList();
   }, [id]);
 
   const [view, setView] = useState("table");
 
   return (
     <div className="">
-      <FiltersBar fetch={fetch} listId={id} />
+      <div className="font-bold text-xl py-4">{list?.Name}</div>
 
+      <MapBox
+        places={places}
+        selectedMarker={selectedMarker}
+        setSelectedMarker={setSelectedMarker}
+      />
+
+      <div className="form-control">
+        <label className="label cursor-pointer">
+          <span className="label-text font-bold text-xl py-4">
+            {list?.privacy}
+          </span>
+          <input
+            type="checkbox"
+            className="toggle toggle-primary"
+            checked={list?.privacy === "PUBLIC"}
+            onChange={handleChangePrivacy}
+          />
+        </label>
+      </div>
+
+      <FiltersBar fetch={fetch} listId={id} />
       <div role="tablist" className="tabs tabs-bordered w-10">
         <input
           type="radio"
@@ -63,7 +110,10 @@ const Home = () => {
                 <Card
                   title={place.title}
                   instagramUrl={place.instagram_url}
+                  longitude={place.longitude}
+                  lattitude={place.lattitude}
                   onDelete={() => onDelete(place.id)}
+                  setSelectedMarker={() => setSelectedMarker(place)}
                 />
               </div>
             ))

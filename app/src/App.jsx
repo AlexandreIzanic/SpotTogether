@@ -9,6 +9,7 @@ import { supabase } from "./helper/supabaseClient";
 
 import { Auth } from "@supabase/auth-ui-react";
 import { ThemeSupa } from "@supabase/auth-ui-shared";
+import PublicLists from "./scenes/PublicLists";
 
 function App() {
   const [session, setSession] = useState(null);
@@ -35,14 +36,15 @@ function App() {
     );
 
   return (
-    <div className="bg-[#1C1C1C] text-white min-h-screen flex  ">
+    <div className="bg-[#1C1C1C] text-white  flex h-screen  ">
       <BrowserRouter>
         <Navbar />
-        <div className="max-w-7xl m-auto w-full h-full min-h-screen py-4  ">
+        <div className="max-w-7xl mx-auto w-full h-full  py-4 flex-1 p-6 overflow-y-auto   ">
           <Routes>
             <Route path="/" element={<Home />} />
             <Route path="/lists/:id" element={<List />} />
             <Route path="/settings" element={<Settings />} />
+            <Route path="/public-lists" element={<PublicLists />} />
           </Routes>
         </div>
       </BrowserRouter>
