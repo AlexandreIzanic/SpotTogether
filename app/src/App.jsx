@@ -10,6 +10,8 @@ import { supabase } from "./helper/supabaseClient";
 import { Auth } from "@supabase/auth-ui-react";
 import { ThemeSupa } from "@supabase/auth-ui-shared";
 import PublicLists from "./scenes/PublicLists";
+import ViewerList from "./scenes/ViewerList";
+import Events from "./scenes/Events";
 
 function App() {
   const [session, setSession] = useState(null);
@@ -43,8 +45,10 @@ function App() {
           <Routes>
             <Route path="/" element={<Home />} />
             <Route path="/lists/:id" element={<List />} />
+            <Route path="/public-lists/:id" element={<ViewerList />} />
             <Route path="/settings" element={<Settings />} />
             <Route path="/public-lists" element={<PublicLists />} />
+            <Route path="/events" element={<Events />} />
           </Routes>
         </div>
       </BrowserRouter>

@@ -91,6 +91,7 @@ const ViewerList = () => {
                 <Card
                   place={place}
                   setSelectedMarker={() => setSelectedMarker(place)}
+                  selectedMarker={selectedMarker}
                 />
               </div>
             ))

@@ -5,6 +5,7 @@ import { supabase } from "../helper/supabaseClient";
 import toast from "react-hot-toast";
 import { useParams } from "react-router-dom";
 import { useNavigate } from "react-router-dom";
+import { HiMiniPencilSquare } from "react-icons/hi2";
 
 import "mapbox-gl/dist/mapbox-gl.css";
 import MapBox from "../components/MapBox";
@@ -57,7 +58,10 @@ const Home = () => {
   return (
     <div className="overflow-y-hidden flex flex-col h-full ">
       <div className="sticky bg-[#1C1C1C] top-0">
-        <div className="font-bold text-xl py-4">{list?.Name}</div>
+        <div className="flex items-center gap-2">
+          <div className="font-bold text-xl py-4">{list?.Name}</div>
+          <HiMiniPencilSquare className="" />
+        </div>
         <MapBox
           places={places}
           selectedMarker={selectedMarker}
@@ -118,6 +122,7 @@ const Home = () => {
                   place={place}
                   onDelete={() => onDelete(place.id)}
                   setSelectedMarker={() => setSelectedMarker(place)}
+                  selectedMarker={selectedMarker}
                 />
               </div>
             ))
@@ -139,6 +144,7 @@ const FiltersBar = ({ fetch, listId }) => {
         title: newPlace.title,
         list_id: listId,
         instagram_url: newPlace.instagram_url,
+        website: newPlace.website,
       },
     ]);
     fetch();
@@ -174,6 +180,16 @@ const FiltersBar = ({ fetch, listId }) => {
           value={newPlace.instagram_url || ""}
           onChange={(event) =>
             setNewPlace({ ...newPlace, instagram_url: event.target.value })
+          }
+        />
+
+        <input
+          type="text"
+          placeholder="Website"
+          className="input w-full max-w-xs"
+          value={newPlace.website || ""}
+          onChange={(event) =>
+            setNewPlace({ ...newPlace, website: event.target.value })
           }
         />
 

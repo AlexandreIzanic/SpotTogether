@@ -2,6 +2,8 @@ import toast from "react-hot-toast";
 import { supabase } from "../helper/supabaseClient";
 import { useEffect, useState } from "react";
 import { Link } from "react-router-dom";
+import { HiOutlineTrash } from "react-icons/hi2";
+import { Navigate } from "react-router-dom";
 
 const Home = () => {
   const [user, setUser] = useState(null);
@@ -162,7 +164,7 @@ const Home = () => {
         <MyLists />
         <div className="flex flex-col">
           <div
-            className="btn btn-neutral"
+            className="btn bg-[#7480ff] text-white"
             onClick={() => document.getElementById("my_modal_2").showModal()}
           >
             New Friends
@@ -222,8 +224,10 @@ const MyLists = () => {
     await supabase
       .from("Lists")
       .insert([{ Name: newList.Name, user_id: user.id }]);
+
     fetch();
-    document.getElementById("my_modal_2").close();
+
+    document.getElementById("modalCreate").close();
   };
 
   useEffect(() => {
@@ -280,9 +284,36 @@ const MyLists = () => {
           </Link>
         </div>
       ))}
+      <button
+        className="btn bg-[#7480ff] text-white "
+        onClick={() => document.getElementById("modalCreate").showModal()}
+      >
+        New List
+      </button>
+      <dialog id="modalCreate" className="modal">
+        <div className="modal-box bg-[#1c1c1c]">
+          <div className="flex flex-col">
+            <div className="font-bold text-lg pb-4">New List</div>
+            <input
+              type="text"
+              placeholder="List Name"
+              className="input w-full my-3 "
+              value={newList.Name || ""}
+              onChange={(event) => setNewList({ Name: event.target.value })}
+            ></input>
+            <button className="btn bg-[#7480ff] text-white " onClick={add}>
+              Add List
+            </button>
+          </div>
+        </div>
+        <form method="dialog" className="modal-backdrop">
+          <button>close</button>
+        </form>
+      </dialog>
     </div>
   );
 };
+
 const AllUsers = ({ users, addFriend, filter, setFilter }) => {
   return (
     <>
@@ -305,7 +336,10 @@ const AllUsers = ({ users, addFriend, filter, setFilter }) => {
                       <td>{user.email}</td>
 
                       <td>
-                        <button onClick={() => addFriend(user.id)}>
+                        <button
+                          className="btn bg-[#7480ff] text-white"
+                          onClick={() => addFriend(user.id)}
+                        >
                           Add Friend
                         </button>
                       </td>
@@ -326,8 +360,8 @@ const AllUsers = ({ users, addFriend, filter, setFilter }) => {
 
 const Friends = ({ friends, deleteFriend }) => {
   return (
-    <div className="flex flex-col">
-      <div className="overflow-x-auto max-w-80  rounded-xl bg-[#2D2D2D] ">
+    <div className="flex flex-col min-w-56">
+      <div className="overflow-x-auto max-w-80  rounded-xl bg-[#2D2D2D]  ">
         <table className="table">
           <thead>
             <tr></tr>
@@ -335,9 +369,11 @@ const Friends = ({ friends, deleteFriend }) => {
           <tbody>
             {friends?.map((user) => (
               <tr key={user.id} className="hover">
-                <td>{user.email}</td>
+                <td>{user.username}</td>
                 <td>
-                  <button onClick={() => deleteFriend(user.id)}>Delete</button>
+                  <button className="" onClick={() => deleteFriend(user.id)}>
+                    <HiOutlineTrash className="text-red-500" />
+                  </button>
                 </td>
               </tr>
             ))}

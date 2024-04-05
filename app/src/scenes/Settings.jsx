@@ -6,6 +6,8 @@ const Settings = () => {
   const [error, setError] = useState(null);
   const [password, setPassword] = useState("");
 
+  const [profile, setProfile] = useState(null);
+
   useEffect(() => {
     const fetch = async () => {
       const {
@@ -14,6 +16,16 @@ const Settings = () => {
       setUser(user);
     };
     fetch();
+
+    const fetchProfile = async () => {
+      const { data } = await supabase
+        .from("profiles")
+        .select()
+        .eq("id", user.id)
+        .single();
+      setProfile(data);
+    };
+    fetchProfile();
   }, []);
 
   const handlePasswordChange = async () => {
@@ -29,7 +41,9 @@ const Settings = () => {
   return (
     <div>
       <h1>Settings</h1>
-      <div>{user.email}</div>
+
+      <div>Username : {profile?.username}</div>
+      <div>Email: {user.email}</div>
       <input
         type="password"
         placeholder="New Password"
