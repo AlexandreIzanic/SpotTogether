@@ -9,27 +9,29 @@ const Card = ({ onDelete, place, setSelectedMarker, selectedMarker }) => {
         selectedMarker === place ? "bg-[#7480ff]" : "bg-[#2D2D2D]"
       }  `}
     >
-      <div className="bg-[#1C1C1C] w-1/5 rounded-xl ">
+      <div className="bg-[#1C1C1C] w-1/5 min-w-28       rounded-xl ">
         {place.background_url && (
           <img
             src={place.background_url}
-            className="w-full h-full rounded-xl border-none object-cover "
+            className="w-full h-full rounded-xl min-w-10 border-none object-cover "
           ></img>
         )}
       </div>
       <div className="flex flex-col gap-2 w-full">
         <div className="flex gap-4  ">
-          <div className="text-2xl ">{place.title}</div>
+          <div className=" text-base md:text-2xl ">{place.title}</div>
 
-          <div
-            className={`  rounded-lg  py-2 px-3 font-medium text-xs ${
-              selectedMarker === place
-                ? "bg-[#2D2D2D] text-white"
-                : "bg-[#7480ff] text-[#1c1c1c] "
-            } `}
-          >
-            {place.type}
-          </div>
+          {place.type && (
+            <div
+              className={` md:block hidden  rounded-lg  py-2 px-3 font-medium text-xs ${
+                selectedMarker === place
+                  ? "bg-[#2D2D2D] text-white"
+                  : "bg-[#7480ff] text-[#1c1c1c] "
+              } `}
+            >
+              {place.type}
+            </div>
+          )}
         </div>
 
         <div className="flex gap-2">
