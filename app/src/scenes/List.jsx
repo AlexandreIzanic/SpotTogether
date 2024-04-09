@@ -6,6 +6,18 @@ import toast from "react-hot-toast";
 import { useParams } from "react-router-dom";
 import { useNavigate } from "react-router-dom";
 import { HiMiniPencilSquare } from "react-icons/hi2";
+import {
+  setKey,
+  setDefaults,
+  setLanguage,
+  setRegion,
+  fromAddress,
+  fromLatLng,
+  fromPlaceId,
+  setLocationType,
+  geocode,
+  RequestType,
+} from "react-geocode";
 
 import "mapbox-gl/dist/mapbox-gl.css";
 import MapBox from "../components/MapBox";
@@ -14,6 +26,12 @@ const Home = () => {
   const [places, setPlaces] = useState([]);
   const [list, setList] = useState(null);
   const [selectedMarker, setSelectedMarker] = useState(null);
+
+  setDefaults({
+    key: "AIzaSyDuLTp6CauR2-u9imascGH48-6aITfD4Po", // Your Google API key here.
+    language: "fr",
+    region: "fr",
+  });
 
   const fetchList = async () => {
     const { data } = await supabase
@@ -48,24 +66,58 @@ const Home = () => {
     fetchList();
   };
 
+  const handleChangeName = async () => {
+    console.log(id);
+    console.log(list);
+    const newName = list.Name;
+    await supabase
+      .from("Lists")
+      .update({ Name: newName })
+      .eq("id", id)
+      .single();
+    fetchList();
+    toast.success("Successfully updated!");
+  };
+
   useEffect(() => {
     fetch();
     fetchList();
   }, [id]);
 
   const [view, setView] = useState("table");
+  const [viewEdit, setViewEdit] = useState(false);
+
+  const [tempoMarker, setTempoMarker] = useState("");
 
   return (
     <div className="overflow-y-hidden flex flex-col h-full ">
       <div className="sticky bg-[#1C1C1C] top-0">
         <div className="flex items-center gap-2">
-          <div className="font-bold text-xl py-4">{list?.Name}</div>
-          <HiMiniPencilSquare className="" />
+          {viewEdit ? (
+            <>
+              <input
+                type="text"
+                className="input w-full max-w-xs my-4"
+                value={list?.Name}
+                onChange={(event) =>
+                  setList({ ...list, Name: event.target.value })
+                }
+              />
+              <button onClick={handleChangeName}>New Name</button>
+            </>
+          ) : (
+            <div className="font-bold text-xl py-4">{list?.Name}</div>
+          )}
+          <HiMiniPencilSquare
+            className="cursor-pointer"
+            onClick={() => setViewEdit(!viewEdit)}
+          />
         </div>
         <MapBox
           places={places}
           selectedMarker={selectedMarker}
           setSelectedMarker={setSelectedMarker}
+          tempoMarker={tempoMarker}
         />
 
         <div className="form-control">
@@ -82,7 +134,12 @@ const Home = () => {
           </label>
         </div>
 
-        <FiltersBar fetch={fetch} listId={id} />
+        <FiltersBar
+          fetch={fetch}
+          listId={id}
+          tempoMarker={tempoMarker}
+          setTempoMarker={setTempoMarker}
+        />
         <div role="tablist" className="tabs tabs-bordered w-10 gap-1">
           <input
             type="radio"
@@ -132,23 +189,32 @@ const Home = () => {
   );
 };
 
-const FiltersBar = ({ fetch, listId }) => {
+const FiltersBar = ({ fetch, listId, tempoMarker, setTempoMarker }) => {
   const navigate = useNavigate();
   const [newPlace, setNewPlace] = useState({
     title: null,
     instagram_url: null,
   });
   const add = async () => {
+    if (!tempoMarker) {
+      toast.error("Please set a marker on the map!");
+      return;
+    }
+
     await supabase.from("place").insert([
       {
         title: newPlace.title,
         list_id: listId,
         instagram_url: newPlace.instagram_url,
         website: newPlace.website,
+        lattitude: tempoMarker.lat,
+        longitude: tempoMarker.lng,
       },
     ]);
+    setTempoMarker("");
     fetch();
     setNewPlace({ title: null, type: null });
+
     toast.success("Successfully created!");
   };
 
@@ -160,8 +226,24 @@ const FiltersBar = ({ fetch, listId }) => {
     navigate("/");
   };
 
+  const [tempoAdresse, setTempoAdresse] = useState("");
+
+  console.log(tempoAdresse);
+
+  // Get latitude & longitude from address.
+
+  const adressToLatLng = () => {
+    fromAddress(tempoAdresse)
+      .then(({ results }) => {
+        const { lat, lng } = results[0].geometry.location;
+        console.log(lat, lng);
+        setTempoMarker({ lat, lng });
+      })
+      .catch(console.error);
+  };
+
   return (
-    <div className="flex justify-between">
+    <div className="md:flex hidden justify-between">
       <div className="flex gap-4">
         <input
           type="text"
@@ -192,6 +274,22 @@ const FiltersBar = ({ fetch, listId }) => {
             setNewPlace({ ...newPlace, website: event.target.value })
           }
         />
+
+        <div className=" w-full max-w-xs relative">
+          <button
+            onClick={() => adressToLatLng()}
+            className="top-[-28px] text-[#7480ff] underline font-bold absolute"
+          >
+            Set Marker
+          </button>
+          <input
+            type="text"
+            placeholder="Adresse"
+            className="input w-full max-w-xs"
+            value={tempoAdresse || ""}
+            onChange={(event) => setTempoAdresse(event.target.value)}
+          />
+        </div>
 
         <button className="btn btn-neutral" onClick={add}>
           +

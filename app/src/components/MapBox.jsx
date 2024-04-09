@@ -5,7 +5,7 @@ import Popup from "./Popup";
 
 mapboxgl.accessToken =
   "pk.eyJ1IjoiYWxleGFuZHJlLWl6YyIsImEiOiJjbHVrM2Fod2swamxjMmtsbXh4Y3dxYmEyIn0.FTKlr6wwlsAeXnurfl027A";
-const MapBox = ({ places, selectedMarker, setSelectedMarker }) => {
+const MapBox = ({ places, selectedMarker, setSelectedMarker, tempoMarker }) => {
   const mapContainer = useRef(null);
   const map = useRef(null);
   const [lng, setLng] = useState(2.333333);
@@ -25,8 +25,12 @@ const MapBox = ({ places, selectedMarker, setSelectedMarker }) => {
       map.current.flyTo({
         center: [selectedMarker.longitude, selectedMarker.lattitude],
       });
+    } else if (tempoMarker) {
+      map.current.flyTo({
+        center: [tempoMarker.lng, tempoMarker.lat],
+      });
     }
-  }, [selectedMarker]);
+  }, [selectedMarker, tempoMarker]);
 
   for (const place of places) {
     if (place.lattitude && place.longitude) {
@@ -47,6 +51,14 @@ const MapBox = ({ places, selectedMarker, setSelectedMarker }) => {
         setSelectedMarker(place);
       });
     }
+  }
+
+  if (tempoMarker) {
+    new mapboxgl.Marker({
+      color: "#ff0000",
+    })
+      .setLngLat([tempoMarker.lng, tempoMarker.lat])
+      .addTo(map.current);
   }
 
   useEffect(() => {
