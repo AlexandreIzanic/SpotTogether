@@ -4,6 +4,7 @@ import { useEffect, useState } from "react";
 import { Link } from "react-router-dom";
 import { HiOutlineTrash } from "react-icons/hi2";
 import { Navigate } from "react-router-dom";
+import Card from "../components/card";
 
 const Home = () => {
   const [user, setUser] = useState(null);
@@ -12,7 +13,17 @@ const Home = () => {
   const [friends, setFriends] = useState([]);
   const [invitations, setInvitations] = useState([]);
 
+  const [place, setPlace] = useState(null);
   const [filter, setFilter] = useState({ email: "" });
+
+  const fetchLastPlace = async () => {
+    const { data } = await supabase
+      .from("place")
+      .select()
+      .order("created_at", { ascending: false })
+      .limit(1);
+    setPlace(data[0]);
+  };
 
   const fetchUserId = async () => {
     const { data } = await supabase.auth.getUser();
@@ -137,6 +148,10 @@ const Home = () => {
   };
 
   useEffect(() => {
+    fetchLastPlace();
+  }, []);
+
+  useEffect(() => {
     fetchAllUsers();
   }, [filter]);
 
@@ -202,6 +217,11 @@ const Home = () => {
               declineInvitation={declineInvitation}
             />
           )}
+
+          <div className="font-bold text-xl mt-3">Last Place Added</div>
+          <div>
+            <Card place={place} />
+          </div>
         </div>
       </div>
     </>
