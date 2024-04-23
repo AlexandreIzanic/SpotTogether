@@ -31,7 +31,14 @@ const ViewerList = () => {
   };
 
   const fetch = async () => {
-    const { data } = await supabase.from("place").select().eq("list_id", id);
+    const { data } = await supabase
+      .from("place")
+      .select(
+        `
+    *, tags:places_tags (tag:tags(id, name))
+  `
+      )
+      .eq("list_id", id);
     setPlaces(data);
   };
 

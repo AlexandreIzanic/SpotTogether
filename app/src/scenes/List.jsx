@@ -6,18 +6,8 @@ import toast from "react-hot-toast";
 import { useParams } from "react-router-dom";
 import { useNavigate } from "react-router-dom";
 import { HiMiniPencilSquare } from "react-icons/hi2";
-import {
-  setKey,
-  setDefaults,
-  setLanguage,
-  setRegion,
-  fromAddress,
-  fromLatLng,
-  fromPlaceId,
-  setLocationType,
-  geocode,
-  RequestType,
-} from "react-geocode";
+
+import { setDefaults, fromAddress } from "react-geocode";
 
 import "mapbox-gl/dist/mapbox-gl.css";
 import MapBox from "../components/MapBox";
@@ -43,7 +33,14 @@ const Home = () => {
   };
 
   const fetch = async () => {
-    const { data } = await supabase.from("place").select().eq("list_id", id);
+    const { data } = await supabase
+      .from("place")
+      .select(
+        `
+    *, tags:places_tags (tag:tags(id, name))
+  `
+      )
+      .eq("list_id", id);
     setPlaces(data);
   };
 
