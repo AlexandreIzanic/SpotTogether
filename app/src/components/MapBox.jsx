@@ -1,6 +1,5 @@
 import mapboxgl from "mapbox-gl";
 import { useEffect, useRef, useState } from "react";
-import ReactDOMServer from "react-dom/server";
 import Popup from "./Popup";
 
 mapboxgl.accessToken =
@@ -12,14 +11,6 @@ const MapBox = ({ places, selectedMarker, setSelectedMarker, tempoMarker }) => {
   const [lat, setLat] = useState(48.866667);
   const [zoom, setZoom] = useState(11);
 
-  /*   const Popup = ({ place }) => {
-    return (
-      <div className="p-2 ">
-        <h1>{place.title}</h1>
-        <a href={place.instagram_url}>Insta</a>
-      </div>
-    );
-  }; */
   useEffect(() => {
     if (selectedMarker) {
       map.current.flyTo({
@@ -38,13 +29,6 @@ const MapBox = ({ places, selectedMarker, setSelectedMarker, tempoMarker }) => {
         color: selectedMarker === place ? "#7480ff" : "#2d2d2d",
       })
         .setLngLat([place.longitude, place.lattitude])
-        /*  .setPopup(
-          new mapboxgl.Popup().setHTML(
-            ReactDOMServer.renderToString({
-              <Popup place={place} />
-            })
-          )
-        ) */
         .addTo(map.current);
 
       marker.getElement().addEventListener("click", () => {
@@ -62,26 +46,6 @@ const MapBox = ({ places, selectedMarker, setSelectedMarker, tempoMarker }) => {
   }
 
   useEffect(() => {
-    var options = {
-      enableHighAccuracy: true,
-      timeout: 5000,
-      maximumAge: 0,
-    };
-
-    function success(pos) {
-      var crd = pos.coords;
-
-      console.log("Votre position actuelle est :");
-      console.log(`Latitude : ${crd.latitude}`);
-      console.log(`Longitude : ${crd.longitude}`);
-      console.log(`La précision est de ${crd.accuracy} mètres.`);
-    }
-
-    function error(err) {
-      console.log(`ERREUR (${err.code}): ${err.message}`);
-    }
-    navigator.geolocation.getCurrentPosition(success, error, options);
-
     if (map.current) return;
     map.current = new mapboxgl.Map({
       container: mapContainer.current,
