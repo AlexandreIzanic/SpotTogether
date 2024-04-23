@@ -12,6 +12,7 @@ import { ThemeSupa } from "@supabase/auth-ui-shared";
 import PublicLists from "./scenes/PublicLists";
 import ViewerList from "./scenes/ViewerList";
 import Events from "./scenes/Events";
+import Places from "./scenes/Places";
 
 function App() {
   const [session, setSession] = useState(null);
@@ -44,6 +45,7 @@ function App() {
         <div className="max-w-7xl mx-auto w-full h-full  py-4 flex-1 p-6 overflow-y-auto   ">
           <Routes>
             <Route path="/" element={<Home />} />
+            <Route path="/places" element={<Places />} />
             <Route path="/lists/:id" element={<List />} />
             <Route path="/public-lists/:id" element={<ViewerList />} />
             <Route path="/settings" element={<Settings />} />
