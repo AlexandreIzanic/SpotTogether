@@ -1,4 +1,5 @@
 import { NavLink } from "react-router-dom";
+import { HiBars3 } from "react-icons/hi2";
 
 const Navbar = () => {
   return (
@@ -22,6 +23,17 @@ const Navbar = () => {
           >
             New List +
           </button> */}
+
+          <NavLink
+            to={`/places`}
+            className={({ isActive }) =>
+              isActive
+                ? " font-semibold text-lg"
+                : "navbar-brand font-semibold text-lg text-[#a9a9a9]"
+            }
+          >
+            Places
+          </NavLink>
 
           <NavLink
             to={`/public-lists`}

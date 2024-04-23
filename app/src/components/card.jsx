@@ -21,17 +21,20 @@ const Card = ({ onDelete, place, setSelectedMarker, selectedMarker }) => {
         <div className="flex gap-4  ">
           <div className=" text-base md:text-2xl ">{place.title}</div>
 
-          {place.type && (
-            <div
-              className={` md:block hidden  rounded-lg  py-2 px-3 font-medium text-xs ${
-                selectedMarker === place
-                  ? "bg-[#2D2D2D] text-white"
-                  : "bg-[#7480ff] text-[#1c1c1c] "
-              } `}
-            >
-              {place.type}
-            </div>
-          )}
+          {place.tags?.length
+            ? place.tags.map(({ tag }) => (
+                <div
+                  key={tag.id}
+                  className={` md:block hidden  rounded-lg  py-2 px-3 font-medium text-xs ${
+                    selectedMarker === place
+                      ? "bg-[#2D2D2D] text-white"
+                      : "bg-[#7480ff] text-[#1c1c1c] "
+                  } `}
+                >
+                  {tag.name}
+                </div>
+              ))
+            : null}
         </div>
 
         <div className="flex gap-2">
